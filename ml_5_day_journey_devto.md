@@ -5,104 +5,70 @@
 
 ---
 
-# 2. What is Artificial Intelligence?
+# What is Artificial Intelligence?
 
-Artificial Intelligence (AI) is the broad idea of building systems that can perform tasks that normally require some form of human intelligence.
+Artificial Intelligence (AI) is the broad idea of building systems that can perform tasks that normally require some form of human intelligence such as: 
 
-Examples:
+- Recognizing an image
+- Generating text / Writing an email 
+- Generating image 
+- Recommending a movie
+- Detecting fraud
+- Predicting the price/value of something
 
-- recognizing an image
-- understanding language
-- recommending a movie
-- detecting fraud
-- predicting whether a customer will leave
-- predicting the price/value of something
-- generating text or images
 
-A useful mental model is:
+### A useful mental model for hierarchy:
 
-![image](https://raw.githubusercontent.com/yash-nigam/AI-ML-Foundations/7516a4b681369d4b105ca19706f7d06da65e30a9/images/AIMLHierarchy.png)
+![image](https://raw.githubusercontent.com/yash-nigam/AI-ML-Foundations/27fe5ec285accb20237f3f13a6f57e87607be014/images/ChatGPT%20Image%20Aug%2025%2C%202026%2C%2012_31_54%20AM.png)
 
 This is simplified because these areas overlap, but it is a useful beginner mental model.
 
-# 3. What is Machine Learning?
+# 1. What is Machine Learning?
 
-Machine learning is a way of building systems where the computer learns patterns from data instead of us manually writing every rule.
+**Machine learning is teaching a computer to find patterns in examples, instead of telling it exact rules to follow.**
 
-Imagine we want to predict whether a telecom customer will churn.
+### The old way: rules you write yourself
 
-A traditional rule-based approach might look like:
+Say you want to predict if a customer will cancel their telecom subscription. You could try writing rules by hand:
 
 ```text
-IF customer has a month-to-month contract
-AND monthly charges are high
-AND tenure is low
+IF contract = month-to-month
+AND monthly charges = high
+AND tenure = low
 THEN churn = yes
 ```
 
-The problem is that we have to invent those rules ourselves.
+The problem: you have to think of every rule yourself, and real-world patterns are usually too messy for simple if/then logic to capture well.
 
-With machine learning, we give the algorithm historical examples:
+### The machine learning way: show it examples
 
-```text
-Customer information → Actual churn result
+Instead of writing rules, you show the algorithm many past customers along with what actually happened to them:
 
-Customer A → No
-Customer B → Yes
-Customer C → No
-Customer D → Yes
-...
-```
+| Customer | Contract type | Monthly charges | Tenure | Did they churn? |
+|---|---|---|---|---|
+| A | Month-to-month | High | Low | Yes |
+| B | Two year | Low | High | No |
+| C | Month-to-month | Low | High | No |
+| D | Month-to-month | High | Low | Yes |
 
-The algorithm tries to learn the relationship between the input information and the known outcome.
+The algorithm studies this data and figures out the pattern on its own — no one told it "low tenure + high charges = risky."
 
-Then we can give it a new customer:
+### Using it on a new customer
 
-```text
-New customer information
-        ↓
-      Model
-        ↓
-Predicted churn
-```
-
-That is the core idea of supervised machine learning.
-
-# 1. Overview: What did I actually learn in these five days?
-
-The real ML workflow is closer to:
+Once trained, you can hand it a brand-new customer it has never seen:
 
 ```text
-Business / real-world question
+New customer's info
         ↓
-Define what we want to predict
+   Trained model
         ↓
-Understand the data
-        ↓
-Clean and prepare the data
-        ↓
-Explore the data visually
-        ↓
-Choose useful features
-        ↓
-Convert data into numbers
-        ↓
-Split into training and testing data
-        ↓
-Choose an appropriate ML algorithm
-        ↓
-Train the model
-        ↓
-Evaluate it on unseen data
-        ↓
-Compare models
-        ↓
-Improve preprocessing / model settings
-        ↓
-Use the model to make predictions
+  Predicted: churn or not
 ```
 
-The important insight is:
+**In one line:** machine learning replaces "rules a human writes" with "patterns the computer learns from data."
+
+
+
 
 > **Machine learning is not mainly about choosing an algorithm. It is about turning a real-world question and messy data into a reliable prediction process.**
 
@@ -110,9 +76,135 @@ Your notebooks actually demonstrate most of this workflow.
 
 ---
 
-# 5. The three major types of Machine Learning
+# The three major types of Machine Learning
 
-## 5.1 Supervised Learning
+## 1.1 Supervised Learning
+
+Supervised learning is the case where **you already know the right answers for your training data.**
+
+The word "supervised" comes from that: it's like a student learning with an answer key available. The model makes a guess, checks it against the known answer, sees how wrong it was, and adjusts. Repeat this thousands of times and it gets good at guessing.
+
+```text
+Input (X)  →  Known answer (Y)
+```
+
+X is everything you know about a customer. Y is what actually happened to them.
+
+```text
+X = [tenure=2, contract=month-to-month, charges=95.5]   →   Y = churned
+X = [tenure=48, contract=two-year, charges=45.2]        →   Y = stayed
+```
+
+The model's job is to learn the *relationship* between X and Y well enough that when a new X shows up with no Y attached, it can produce a sensible guess.
+
+**The key requirement:** you need historical data where the outcome is already recorded. No answer key, no supervised learning.
+
+---
+
+### The only question that splits supervised learning in two
+
+> **Is the thing I'm predicting a category, or a number?**
+
+That's it. That single question decides whether you're doing classification or regression — and it changes your algorithms, your metrics, and how you evaluate success.
+
+---
+
+## Classification — predicting a category
+
+**Question:** "Which bucket does this belong to?"
+
+The answer is one of a fixed set of options. There's no "in between."
+
+```text
+Spam        /  Not spam
+Churn       /  No churn
+Fraud       /  Not fraud
+Cat / Dog / Horse        ← can be more than two buckets
+```
+
+Internally, the categories become numbers, but they're labels, not quantities:
+
+```text
+0 = did not churn
+1 = churned
+```
+
+Important: `1` here doesn't mean "twice as much as 0." It's just a name. There is no such thing as a customer who churned `0.5`.
+
+**What the model actually outputs**
+
+Most classifiers don't hand you a hard 0 or 1 — they give a *probability*, and you apply a threshold:
+
+```text
+Customer A  →  0.91 probability of churn  →  predict 1 (churn)
+Customer B  →  0.12 probability of churn  →  predict 0 (no churn)
+Customer C  →  0.53 probability of churn  →  predict 1, but barely
+```
+
+That threshold (usually 0.5) is a business decision, not a mathematical one. If missing a churner is expensive, lower it to 0.3 and catch more of them — at the cost of more false alarms.
+
+**Being "wrong" in classification** means putting something in the wrong bucket. You either got the category right or you didn't.
+
+**Algorithms:** Logistic Regression, Support Vector Classifier (SVC), Decision Tree Classifier
+
+**Your Telco churn project is classification** — the answer is one of two labels.
+
+---
+
+## Regression — predicting a number
+
+**Question:** "How much?"
+
+The answer is a quantity on a continuous scale, where in-between values are meaningful.
+
+```text
+House price      →  ₹87,45,000
+Temperature      →  31.4 °C
+Fuel efficiency  →  23.7 MPG
+Customer Lifetime Value  →  6,543.21
+```
+
+Here the numbers genuinely mean something as numbers. A CLV of 6,000 really is twice a CLV of 3,000. That's the whole difference from classification.
+
+**Being "wrong" in regression** is a matter of degree, not right-or-wrong:
+
+```text
+Actual CLV: 6,543
+Prediction: 6,500   →  off by 43     (excellent)
+Prediction: 5,000   →  off by 1,543  (poor)
+Prediction: 200     →  off by 6,343  (terrible)
+```
+
+This is why regression uses error-distance metrics (MAE, RMSE, R²) while classification uses counting metrics (accuracy, precision, recall). You can't ask "how far off was this spam prediction" — the question doesn't make sense.
+
+**Algorithms:** Linear Regression, KNN Regressor, SVR, Decision Tree Regressor, Bagging Regressor, AdaBoost Regressor, Random Forest Regressor
+
+**Your CLV project is regression** — the answer is a number on a scale.
+
+---
+
+## A note on naming that confuses everyone
+
+**Logistic Regression is a classification algorithm.** Despite the name.
+
+It's called "regression" because of the math it borrows internally (it regresses on the log-odds), but you use it to predict categories. Every ML beginner trips on this once. Now you won't.
+
+---
+
+## Quick test for your own problems
+
+When you get a new dataset, look at the target column and ask:
+
+```text
+Does averaging two values in this column produce something meaningful?
+
+  Average of ₹5,000 and ₹7,000 = ₹6,000  ✓ meaningful  → regression
+  Average of "spam" and "not spam"       ✗ meaningless → classification
+```
+
+That one check will correctly sort almost every supervised problem you encounter.
+
+## 1.1 Supervised Learning
 
 In supervised learning, we have examples where the correct answer is already known.
 
@@ -214,7 +306,7 @@ Common regression algorithms you tried:
 
 ---
 
-# 7. Unsupervised Learning
+# 1.2 Unsupervised Learning
 
 In unsupervised learning, we do not have a known target.
 
@@ -371,145 +463,13 @@ Run again
 
 # 11. The Python libraries you used
 
-## 11.1 NumPy
-
-```python
-import numpy as np
-```
-
-NumPy provides numerical operations and arrays.
-
-You used it for things such as:
-
-```python
-np.nan
-np.log1p()
-np.expm1()
-```
-
-### `np.nan`
-
-Represents a missing numerical value.
-
-### `np.log1p(x)`
-
-Calculates:
-
-```text
-log(1 + x)
-```
-
-It is useful when a target is heavily skewed.
-
-### `np.expm1(x)`
-
-Reverses `log1p`:
-
-```text
-exp(x) - 1
-```
-
-You used this later to convert log predictions back to the original CLV scale.
-
----
-
-# 12. Pandas
-
-```python
-import pandas as pd
-```
-
-Pandas is one of the most important Python libraries for data work.
-
-Think of a Pandas DataFrame as a spreadsheet that Python can manipulate.
-
-You used it to:
-
-- load CSV files
-- inspect data
-- remove columns
-- convert data types
-- detect missing values
-- fill missing values
-- select X and Y
-- create encoded columns
-- save predictions
-
-Example:
-
-```python
-df = pd.read_csv("Telco_Customer_Churn.csv")
-```
-
----
-
-# 13. Matplotlib
-
-```python
-import matplotlib.pyplot as plt
-```
-
-Matplotlib is a general-purpose plotting library.
-
-It provides the foundation for many Python visualizations.
-
-You used it for:
-
-```python
-plt.figure()
-plt.title()
-plt.show()
-```
-
----
-
-# 14. Seaborn
-
-```python
-import seaborn as sns
-```
-
-Seaborn makes statistical visualizations easier to create.
-
-You used:
-
-- `countplot`
-- `boxplot`
-- `histplot`
-- `pairplot`
-- `scatterplot`
-- `heatmap`
-
-A key lesson:
-
-> A graph is not decoration. It is a tool for asking questions about the data.
-
----
-
-# 15. Scikit-learn
-
-Scikit-learn is the main ML library used in your notebooks.
-
-You used it for:
-
-- splitting data
-- preprocessing
-- encoding
-- scaling
-- classification
-- regression
-- evaluation
-
-The basic pattern is:
-
-```python
-model = SomeModel()
-model.fit(X_train, Y_train)
-predictions = model.predict(X_test)
-```
-
-This pattern appears again and again in ML.
-
+| Library | Import | Purpose | Key functions/methods used | Notes |
+|---|---|---|---|---|
+| NumPy | `import numpy as np` | Numerical operations and arrays | `np.nan`, `np.log1p()`, `np.expm1()` | `np.nan` = missing value. `log1p(x)` = log(1+x), useful for skewed targets. `expm1(x)` reverses it — used to convert log predictions back to original CLV scale. |
+| Pandas | `import pandas as pd` | DataFrame-based data manipulation (like a spreadsheet in Python) | `read_csv()`, column selection/removal, dtype conversion, missing-value detection/fill, X/Y selection, encoding, saving predictions | Example: `df = pd.read_csv("Telco_Customer_Churn.csv")` |
+| Matplotlib | `import matplotlib.pyplot as plt` | General-purpose plotting foundation | `plt.figure()`, `plt.title()`, `plt.show()` | Underlies most other Python visualization libraries |
+| Seaborn | `import seaborn as sns` | Statistical visualization built on Matplotlib | `countplot`, `boxplot`, `histplot`, `pairplot`, `scatterplot`, `heatmap` | A graph is a tool for asking questions about the data, not decoration |
+| Scikit-learn | — | Core ML library: splitting, preprocessing, encoding, scaling, classification, regression, evaluation | `model.fit(X_train, Y_train)`, `model.predict(X_test)` | This fit → predict pattern repeats across nearly all scikit-learn models |
 ---
 
 # 16. The most important workflow: EDA
@@ -522,199 +482,15 @@ EDA is the process of investigating the dataset before building the final model.
 
 Your notebooks use:
 
-```python
-df.head()
-df.shape
-df.describe()
-df.info()
-df.sample()
-df.isnull().sum()
-```
+| Command | Question it answers | What it shows | Notes |
+|---|---|---|---|
+| `df.head()` | What does the data look like? | First few rows: column names, example values, obvious problems | Confirms the data loaded correctly — like opening the box before using what's inside |
+| `df.shape` | How much data do I have? | Row and column counts, e.g. `(398, 9)` → 398 rows, 9 columns | Dataset size affects model choice, computation time, and overfitting risk |
+| `df.info()` | What types of data do I have? | Column names, non-null counts, data types, memory usage | Reveals type problems — e.g. Auto MPG's `horsepower` shows as `object` because it contains `"?"` values, not clean numbers |
+| `df.describe()` / `df.describe(include="all")` | What's the scale and distribution of each variable? | Count, mean, std, min, 25%, median, 75%, max | A big gap between 75th percentile and max can hint at extreme values |
+| `df.sample(n)` | Is the whole dataset consistent, not just the start? | Random rows instead of the first few | Surfaces unusual values, formatting issues, unexpected categories missed by `head()` |
+| `df.isnull().sum()` | How many missing values per column? | Count of `NaN`s per column | Catches true missing values only — a placeholder like `"?"` is a string, not `NaN`, so fake missing values must be found separately before this check means anything |
 
-plus graphs.
-
-These are not random commands.
-
-They answer different questions.
-
----
-
-# 17. `df.head()` — What does the data look like?
-
-You used:
-
-```python
-df.head()
-```
-
-It displays the first few rows.
-
-Why?
-
-Because before doing anything else, you want to see:
-
-- column names
-- example values
-- obvious data problems
-- whether the data loaded correctly
-
-Think of it as opening the box before using what is inside.
-
----
-
-# 18. `df.shape` — How much data do I have?
-
-You used:
-
-```python
-df.shape
-```
-
-For Auto MPG:
-
-```text
-(398, 9)
-```
-
-That means:
-
-```text
-398 rows
-9 columns
-```
-
-Why does this matter?
-
-Because dataset size affects:
-
-- model choice
-- computation time
-- confidence in results
-- risk of overfitting
-
----
-
-# 19. `df.info()` — What types of data do I have?
-
-You used:
-
-```python
-df.info()
-```
-
-This tells you:
-
-- column names
-- number of non-null values
-- data types
-- memory usage
-
-This is extremely important.
-
-For example, in Auto MPG:
-
-```text
-horsepower → object
-```
-
-At first glance horsepower sounds numerical.
-
-But Pandas sees it as text.
-
-Why?
-
-Because the dataset contains values such as:
-
-```text
-?
-```
-
-A column containing:
-
-```text
-130
-165
-150
-?
-```
-
-cannot be treated as a clean numerical column.
-
-So:
-
-> `df.info()` helps you detect data-type problems before modeling.
-
----
-
-# 20. `df.describe()`
-
-You used:
-
-```python
-df.describe()
-```
-
-and sometimes:
-
-```python
-df.describe(include="all")
-```
-
-This gives summary statistics.
-
-For numerical data you get things such as:
-
-- count
-- mean
-- standard deviation
-- minimum
-- 25th percentile
-- median
-- 75th percentile
-- maximum
-
-This helps you understand the scale and distribution of variables.
-
-For example:
-
-```text
-minimum
-   ↓
-25%
-   ↓
-median
-   ↓
-75%
-   ↓
-maximum
-```
-
-A large difference between the 75th percentile and maximum can be a clue that there may be extreme values.
-
----
-
-# 21. `df.sample()`
-
-You used:
-
-```python
-df.sample(5)
-```
-
-or similar.
-
-This shows random rows.
-
-Why?
-
-Because the first rows may not represent the whole dataset.
-
-Random samples can expose:
-
-- unusual values
-- formatting issues
-- unexpected categories
-- data-entry problems
 
 ---
 
@@ -4043,3 +3819,40 @@ A histogram is not just a graph — it tells you about a distribution.
 And model comparison is not about finding the fanciest algorithm — it is about finding an approach that generalizes well to data the model has never seen.
 
 That, more than anything else, is what I took away from my first five days of machine learning.
+
+
+# 1. Overview: What did I actually learn in these five days?
+
+The real ML workflow is closer to:
+
+```text
+Business / real-world question
+        ↓
+Define what we want to predict
+        ↓
+Understand the data
+        ↓
+Clean and prepare the data
+        ↓
+Explore the data visually
+        ↓
+Choose useful features
+        ↓
+Convert data into numbers
+        ↓
+Split into training and testing data
+        ↓
+Choose an appropriate ML algorithm
+        ↓
+Train the model
+        ↓
+Evaluate it on unseen data
+        ↓
+Compare models
+        ↓
+Improve preprocessing / model settings
+        ↓
+Use the model to make predictions
+```
+
+The important insight is:
