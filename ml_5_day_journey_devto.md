@@ -73,33 +73,34 @@ New customer's info
 > **Machine learning is not mainly about choosing an algorithm. It is about turning a real-world question and messy data into a reliable prediction process.**
 
 Your notebooks actually demonstrate most of this workflow.
-
+---
+# The three major types of Machine Learning
 ---
 
-# The three major types of Machine Learning
 
 ## 1.1 Supervised Learning
 
-Supervised learning is the case where **you already know the right answers for your training data.**
+![image](https://raw.githubusercontent.com/yash-nigam/AI-ML-Foundations/c0252258bb668881200f312721ff28ddde90c002/images/supervised_learning_hierarchy.png)
 
-The word "supervised" comes from that: it's like a student learning with an answer key available. The model makes a guess, checks it against the known answer, sees how wrong it was, and adjusts. Repeat this thousands of times and it gets good at guessing.
+- Supervised learning is the case where **you already know the right answers for your training data.**
 
-```text
+- The word "supervised" comes from that: it's like a student learning with an answer key available. The model makes a guess, checks it against the known answer, sees how wrong it was, and adjusts. Repeat this thousands of times and it gets good at guessing.
+
+```
 Input (X)  →  Known answer (Y)
 ```
 
-X is everything you know about a customer. Y is what actually happened to them.
+- X is everything you know about a customer. Y is what actually happened to them.
 
 ```text
 X = [tenure=2, contract=month-to-month, charges=95.5]   →   Y = churned
 X = [tenure=48, contract=two-year, charges=45.2]        →   Y = stayed
 ```
 
-The model's job is to learn the *relationship* between X and Y well enough that when a new X shows up with no Y attached, it can produce a sensible guess.
+- The model's job is to learn the *relationship* between X and Y well enough that when a new X shows up with no Y attached, it can produce a sensible guess.
 
-**The key requirement:** you need historical data where the outcome is already recorded. No answer key, no supervised learning.
+- **The key requirement:** you need historical data where the outcome is already recorded. No answer key, no supervised learning.
 
----
 
 ### The only question that splits supervised learning in two
 
@@ -107,89 +108,18 @@ The model's job is to learn the *relationship* between X and Y well enough that 
 
 That's it. That single question decides whether you're doing classification or regression — and it changes your algorithms, your metrics, and how you evaluate success.
 
----
-
-## Classification — predicting a category
-
-**Question:** "Which bucket does this belong to?"
-
-The answer is one of a fixed set of options. There's no "in between."
-
-```text
-Spam        /  Not spam
-Churn       /  No churn
-Fraud       /  Not fraud
-Cat / Dog / Horse        ← can be more than two buckets
-```
-
-Internally, the categories become numbers, but they're labels, not quantities:
-
-```text
-0 = did not churn
-1 = churned
-```
-
-Important: `1` here doesn't mean "twice as much as 0." It's just a name. There is no such thing as a customer who churned `0.5`.
-
-**What the model actually outputs**
-
-Most classifiers don't hand you a hard 0 or 1 — they give a *probability*, and you apply a threshold:
-
-```text
-Customer A  →  0.91 probability of churn  →  predict 1 (churn)
-Customer B  →  0.12 probability of churn  →  predict 0 (no churn)
-Customer C  →  0.53 probability of churn  →  predict 1, but barely
-```
-
-That threshold (usually 0.5) is a business decision, not a mathematical one. If missing a churner is expensive, lower it to 0.3 and catch more of them — at the cost of more false alarms.
-
-**Being "wrong" in classification** means putting something in the wrong bucket. You either got the category right or you didn't.
-
-**Algorithms:** Logistic Regression, Support Vector Classifier (SVC), Decision Tree Classifier
-
-**Your Telco churn project is classification** — the answer is one of two labels.
-
----
-
-## Regression — predicting a number
-
-**Question:** "How much?"
-
-The answer is a quantity on a continuous scale, where in-between values are meaningful.
-
-```text
-House price      →  ₹87,45,000
-Temperature      →  31.4 °C
-Fuel efficiency  →  23.7 MPG
-Customer Lifetime Value  →  6,543.21
-```
-
-Here the numbers genuinely mean something as numbers. A CLV of 6,000 really is twice a CLV of 3,000. That's the whole difference from classification.
-
-**Being "wrong" in regression** is a matter of degree, not right-or-wrong:
-
-```text
-Actual CLV: 6,543
-Prediction: 6,500   →  off by 43     (excellent)
-Prediction: 5,000   →  off by 1,543  (poor)
-Prediction: 200     →  off by 6,343  (terrible)
-```
-
-This is why regression uses error-distance metrics (MAE, RMSE, R²) while classification uses counting metrics (accuracy, precision, recall). You can't ask "how far off was this spam prediction" — the question doesn't make sense.
-
-**Algorithms:** Linear Regression, KNN Regressor, SVR, Decision Tree Regressor, Bagging Regressor, AdaBoost Regressor, Random Forest Regressor
-
-**Your CLV project is regression** — the answer is a number on a scale.
-
----
-
-## A note on naming that confuses everyone
-
-**Logistic Regression is a classification algorithm.** Despite the name.
-
-It's called "regression" because of the math it borrows internally (it regresses on the log-odds), but you use it to predict categories. Every ML beginner trips on this once. Now you won't.
-
----
+| | **Classification** | **Regression** |
+|---|---|---|
+| **Question it answers** | "Which bucket does this belong to?" | "How much?" |
+| **Type of answer** | One of a fixed set of options — no in-between | A quantity on a continuous scale — in-between values are meaningful |
+| **Examples** | Spam / Not spam<br>Churn / No churn<br>Fraud / Not fraud<br>Cat / Dog / Horse (can be more than two buckets) | House price → ₹87,45,000<br>Temperature → 31.4 °C<br>Fuel efficiency → 23.7 MPG<br>Customer Lifetime Value → 6,543.21 |
+| **What the numbers mean** | Labels, not quantities. `0 = did not churn`, `1 = churned`. `1` isn't "twice" `0` — no customer churns `0.5` | Genuine quantities. A CLV of 6,000 really is twice a CLV of 3,000 |
+| **What the model outputs** | Usually a probability, then a threshold is applied:<br>`0.91 → predict 1 (churn)`<br>`0.12 → predict 0 (no churn)`<br>`0.53 → predict 1, but barely` | A direct numeric value, e.g. `6,500` |
+| **Threshold** | Usually 0.5, but it's a business decision. Lower it to 0.3 to catch more churners — at the cost of more false alarms | Not applicable |
+| **What "wrong" means** | Right or wrong — you either got the bucket right or you didn't | A matter of degree:<br>actual 6,543 → predicted 6,500 = off by 43 (excellent)<br>→ predicted 5,000 = off by 1,543 (poor)<br>→ predicted 200 = off by 6,343 (terrible) |
+| **Metrics** | Counting metrics: accuracy, precision, recall | Error-distance metrics: MAE, RMSE, R² |
+| **Algorithms** | Logistic Regression, Support Vector Classifier (SVC), Decision Tree Classifier | Linear Regression, KNN Regressor, SVR, Decision Tree Regressor, Bagging Regressor, AdaBoost Regressor, Random Forest Regressor |
+| **Your project** | Telco churn — the answer is one of two labels | Customer Lifetime Value — the answer is a number on a scale |
 
 ## Quick test for your own problems
 
@@ -201,111 +131,7 @@ Does averaging two values in this column produce something meaningful?
   Average of ₹5,000 and ₹7,000 = ₹6,000  ✓ meaningful  → regression
   Average of "spam" and "not spam"       ✗ meaningless → classification
 ```
-
-That one check will correctly sort almost every supervised problem you encounter.
-
-## 1.1 Supervised Learning
-
-In supervised learning, we have examples where the correct answer is already known.
-
-```text
-Input X → Known answer Y
-```
-
-The model learns the relationship between X and Y.
-
-Your notebooks mainly use supervised learning.
-
-There are two major supervised learning tasks.
-
-### Classification
-
-The target is a category.
-
-Examples:
-
-```text
-Spam / Not Spam
-Churn / No Churn
-Fraud / Not Fraud
-Disease / No Disease
-```
-
-Your Telco project is a classification problem.
-
-### Regression
-
-The target is a numerical value.
-
-Examples:
-
-```text
-House price
-Temperature
-Sales
-Customer Lifetime Value
-Fuel efficiency
-```
-
-Your Customer Lifetime Value project is a regression problem.
-
 ---
-
-# 6. Classification vs Regression
-
-This distinction is extremely important.
-
-## Classification
-
-Question:
-
-> "Which category does this example belong to?"
-
-Example:
-
-```text
-Customer → Churn or No Churn
-```
-
-Possible output:
-
-```text
-0
-1
-```
-
-Common classification algorithms you tried:
-
-- Logistic Regression
-- Support Vector Classifier (SVC)
-- Decision Tree Classifier
-
----
-
-## Regression
-
-Question:
-
-> "What numerical value should we predict?"
-
-Example:
-
-```text
-Customer → Customer Lifetime Value = 6,543.21
-```
-
-Common regression algorithms you tried:
-
-- Linear Regression
-- KNN Regressor
-- SVR
-- Decision Tree Regressor
-- Bagging Regressor
-- AdaBoost Regressor
-- Random Forest Regressor
-
----
-
 # 1.2 Unsupervised Learning
 
 In unsupervised learning, we do not have a known target.
@@ -330,11 +156,9 @@ Common examples:
 - Hierarchical clustering
 - PCA
 
-You did not build an unsupervised-learning project in these notebooks, but it is important to know where it fits.
-
 ---
 
-# 8. Reinforcement Learning
+# 1.3 Reinforcement Learning
 
 Reinforcement learning is different.
 
@@ -357,109 +181,6 @@ Examples:
 - certain recommendation/control systems
 
 This was not part of your five-day practical work.
-
----
-
-# 9. Different ways to approach an ML problem
-
-A useful way to think about ML is not:
-
-> "Which algorithm should I use?"
-
-Instead ask:
-
-### Step 1 — What is the question?
-
-For example:
-
-> Can I predict whether a telecom customer will churn?
-
-### Step 2 — What type of target do I have?
-
-```text
-Churn → category → Classification
-Customer Lifetime Value → number → Regression
-```
-
-### Step 3 — What data is available?
-
-Ask:
-
-- What columns exist?
-- Which are numerical?
-- Which are categorical?
-- Are values missing?
-- Are there strange values?
-- Are some columns identifiers?
-- Is the target balanced?
-
-### Step 4 — Explore before modeling
-
-Use statistics and graphs.
-
-### Step 5 — Prepare the data
-
-Convert it into a form the algorithm can understand.
-
-### Step 6 — Establish a baseline
-
-Train a simple model first.
-
-### Step 7 — Compare alternatives
-
-Try other appropriate models.
-
-### Step 8 — Evaluate on unseen data
-
-A model is useful only if it works beyond the data it memorized.
-
----
-
-# 10. Google Colab: Why did we use it?
-
-Google Colab gives you a cloud-based Jupyter Notebook environment.
-
-Instead of installing everything locally, you can run Python code in the browser.
-
-A notebook combines:
-
-```text
-Explanation
-+
-Python code
-+
-Output
-+
-Graphs
-```
-
-This makes it very useful for learning ML.
-
-Your notebooks use paths such as:
-
-```python
-/content/auto-mpg.csv
-```
-
-That is typical of a Colab environment.
-
-A normal learning workflow is:
-
-```text
-Upload dataset
-      ↓
-Open notebook
-      ↓
-Run cells
-      ↓
-Inspect output
-      ↓
-Change code
-      ↓
-Run again
-```
-
----
 
 # 11. The Python libraries you used
 
@@ -670,341 +391,16 @@ You created many graphs. The important thing is to understand what question each
 
 ---
 
-# 28. Countplot
-
-Example:
-
-```python
-sns.countplot(x="Churn", data=df)
-```
-
-A countplot answers:
-
-> "How many observations are in each category?"
-
-For churn:
-
-```text
-No churn → number of customers
-Churn    → number of customers
-```
-
-This immediately helps you understand class balance.
-
-If the graph looks like:
-
-```text
-No Churn ███████████████████
-Churn    ███████
-```
-
-the classes are imbalanced.
-
-That matters because a model could achieve high accuracy simply by favoring the majority class.
-
----
-
-# 29. Countplot with `hue`
-
-You used:
-
-```python
-sns.countplot(
-    x="Contract",
-    hue="Churn",
-    data=df
-)
-```
-
-This answers:
-
-> "How does the target category vary across another category?"
-
-For example:
-
-```text
-Contract type
-     ↓
-Churn / No churn
-```
-
-If month-to-month customers show much more churn than two-year customers, that is an important pattern worth investigating.
-
-But remember:
-
-> A graph showing association does not automatically prove causation.
-
----
-
-# 30. Histogram
-
-You used:
-
-```python
-df.hist(figsize=(10,10))
-```
-
-and:
-
-```python
-sns.histplot(df["MonthlyCharges"], kde=True)
-```
-
-A histogram shows the distribution of a numerical variable.
-
-It helps answer:
-
-- Where are most values?
-- Is the data symmetric?
-- Is it skewed?
-- Are there multiple groups?
-- Are there extreme values?
-
-Example:
-
-```text
-frequency
-   ^
-   |       ███
-   |     ███████
-   |   █████████
-   | ███████████
-   +-----------------> value
-```
-
----
-
-# 31. Why distributions matter
-
-Suppose a feature looks like:
-
-```text
-Most values: 0–100
-A few values: 10,000
-```
-
-That may indicate:
-
-- genuine outliers
-- a different population
-- data-entry errors
-- a highly skewed distribution
-
-A model may react differently depending on the algorithm.
-
-This is one reason EDA happens before modeling.
-
----
-
-# 32. Boxplot
-
-You used:
-
-```python
-sns.boxplot(y=df["Income"])
-```
-
-A boxplot summarizes a distribution.
-
-Conceptually:
-
-```text
-       outlier
-          •
-          |
-      ┌───────┐
-      │       │
-------│  box  │------
-      │       │
-      └───────┘
-          |
-       outlier
-```
-
-The box represents the middle portion of the data.
-
-The line inside the box is the median.
-
-Points outside the whiskers may be treated as potential outliers.
-
-Important:
-
-> An outlier is not automatically an error.
-
-A high-income customer may be perfectly legitimate.
-
----
-
-# 33. Boxplot: target vs category
-
-You used:
-
-```python
-sns.boxplot(
-    x="Coverage",
-    y="Customer Lifetime Value",
-    data=df
-)
-```
-
-This is a powerful graph.
-
-It asks:
-
-> "How does the distribution of Customer Lifetime Value differ between categories?"
-
-For example:
-
-```text
-Coverage A → CLV distribution
-Coverage B → CLV distribution
-Coverage C → CLV distribution
-```
-
-Compare:
-
-- median
-- spread
-- outliers
-- overlap
-
-This can help you identify potentially useful relationships.
-
----
-
-# 34. Scatterplot
-
-You used:
-
-```python
-sns.scatterplot(
-    x="Income",
-    y="Customer Lifetime Value",
-    data=df
-)
-```
-
-A scatterplot examines the relationship between two numerical variables.
-
-Each dot represents an observation.
-
-It helps answer:
-
-> "As X changes, does Y appear to change?"
-
-Possible patterns:
-
-```text
-Positive relationship:
-  •
-    •
-      •
-        •
-
-Negative relationship:
-        •
-      •
-    •
-  •
-
-No obvious relationship:
- •    •
-    •
-  •      •
-     •
-```
-
-The pattern does not have to be a straight line.
-
----
-
-# 35. Pairplot
-
-You used:
-
-```python
-sns.pairplot(...)
-```
-
-A pairplot shows many numerical relationships at once.
-
-It is useful for:
-
-- spotting correlations
-- identifying clusters
-- seeing distributions
-- finding obvious relationships
-- detecting possible outliers
-
-The downside is that it becomes difficult to read when there are many columns.
-
-So:
-
-> Pairplot is excellent for small-to-medium exploratory datasets, but not something you blindly run on every large dataset.
-
----
-
-# 36. Correlation heatmap
-
-You used:
-
-```python
-sns.heatmap(
-    df[["tenure", "MonthlyCharges", "TotalCharges"]].corr(),
-    annot=True
-)
-```
-
-Correlation measures how two numerical variables move together in a linear relationship.
-
-A correlation close to:
-
-```text
-+1 → strong positive linear relationship
- 0 → little/no linear relationship
--1 → strong negative linear relationship
-```
-
-For example:
-
-```text
-tenure ↑
-TotalCharges ↑
-```
-
-could result in positive correlation.
-
-But correlation has an important limitation:
-
-> **Correlation does not prove causation.**
-
-Also, zero correlation does not necessarily mean "no relationship" because the relationship might be non-linear.
-
----
-
-# 37. A key lesson from visualization
-
-The graphs answer different questions:
-
-| Graph | Main question |
-|---|---|
-| Countplot | How many observations are in each category? |
-| Countplot + hue | How does one category vary with another? |
-| Histogram | What does a numerical distribution look like? |
-| Boxplot | What are the median, spread and potential outliers? |
-| Boxplot + category | How does a numerical distribution differ by category? |
-| Scatterplot | How do two numerical variables relate? |
-| Pairplot | What relationships exist among several numerical variables? |
-| Heatmap | How strongly are numerical variables linearly correlated? |
-
-The goal is not:
-
-> "Create lots of graphs."
-
-The goal is:
-
-> "Use the right graph to answer the right question."
-
+| Graph | Code | What it means | How to read it | When to use it | What decision it drives |
+|---|---|---|---|---|---|
+| **Countplot** | `sns.countplot(x="Churn", data=df)` | Bar height = how many rows fall into each category of one column | Compare bar heights. Roughly equal = balanced classes. One bar much taller = imbalanced | Right after loading data, on your target column and any key categorical column | Tells you if your classes are imbalanced. If 80% are "No churn," a model can hit 80% accuracy by always guessing "No" — so you'd stop trusting accuracy and switch to precision/recall, or apply resampling |
+| **Countplot + hue** | `sns.countplot(x="Contract", hue="Churn", data=df)` | Splits each category's bar by a second category — shows how the target distributes *within* each group | Within each contract type, compare the proportion of churn vs no-churn bars. Look for groups where the ratio is visibly different | When you suspect a categorical feature relates to the target | Identifies which categories are predictive. If month-to-month churns far more than two-year, that feature is worth keeping. Caution: association ≠ causation |
+| **Histogram** | `df.hist(figsize=(10,10))`<br>`sns.histplot(df["MonthlyCharges"], kde=True)` | Shows the shape of a numerical column — where values cluster and how they spread | Look for: where the peak is, whether it's symmetric or has a long tail on one side (skew), whether there are multiple humps (subgroups), and whether stray bars sit far right/left | On every numeric column during EDA | Skew tells you whether to transform (`np.log1p`). Multiple humps suggest hidden subgroups. A long tail warns you outliers may distort linear models |
+| **Boxplot (single)** | `sns.boxplot(y=df["Income"])` | Compresses a distribution into five numbers: min, 25%, median, 75%, max — plus flagged extremes | Line in the box = median. Box = middle 50% of data. Whiskers = typical range. Dots beyond whiskers = potential outliers | When you want a compact view of spread and extremes, especially to compare many columns quickly | Flags candidate outliers for investigation. Critical caveat: an outlier is not automatically an error — a genuinely high-income customer is real data, so investigate before deleting |
+| **Boxplot + category** | `sns.boxplot(x="Coverage", y="Customer Lifetime Value", data=df)` | Shows how a numeric target's distribution changes across the levels of a category | Compare across boxes: are the medians at different heights? Do the boxes overlap heavily or barely? Is spread wider in one group? | When testing whether a categorical feature affects a numeric target | Non-overlapping boxes with different medians = strong signal that feature matters for prediction. Heavy overlap = weak feature, possibly drop it |
+| **Scatterplot** | `sns.scatterplot(x="Income", y="Customer Lifetime Value", data=df)` | Each dot is one observation, plotted by two numeric values at once | Look at the overall drift of the cloud: rising left-to-right = positive relationship, falling = negative, shapeless blob = no clear relationship. Curves count too — the pattern needn't be straight | When examining a specific pair of numeric variables, especially feature vs target | Reveals whether a linear model is even appropriate. A curved pattern means linear regression will underfit — consider transforming the feature or using a tree-based model |
+| **Pairplot** | `sns.pairplot(df)` | Runs scatterplots for every numeric pair at once, with distributions on the diagonal | Scan the grid for panels showing clear patterns, then investigate those individually. Diagonal shows each variable's own distribution | Small-to-medium datasets during early exploration | A fast way to find which pairs deserve a closer look. Downside: becomes unreadable with many columns — don't blindly run it on wide datasets |
+| **Correlation heatmap** | `sns.heatmap(df[[...]].corr(), annot=True)` | Numeric score of how strongly each pair of numeric variables moves together *linearly* | `+1` = strong positive linear relationship, `0` = little/no linear relationship, `-1` = strong negative. Read the annotated numbers, not just the colors | After you have several numeric features and want a quick relationship overview | Spots features strongly related to the target (useful) and features strongly related to *each other* (redundant — multicollinearity). Two big caveats: correlation does not prove causation, and zero correlation doesn't mean no relationship — it may just be non-linear |
 ---
 
 # 38. Encoding: why does ML need it?
